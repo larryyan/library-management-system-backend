@@ -6,6 +6,7 @@ from api.book_info import *
 from api.get_books_by_isbn import *
 from api.reader import *
 from api.borrow import *
+from flask_jwt_extended import JWTManager
 
 
 app = Flask(__name__)
