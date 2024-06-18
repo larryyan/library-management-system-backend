@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask.views import MethodView
 from nltk import book
 
@@ -179,6 +179,33 @@ class BookInfoApi(MethodView):
             'status': 'success',
             'message': '数据更新成功'
         }
+
+
+@app.route('/books/<isbn>', methods=['GET'])
+def get_book_by_isbn(isbn):
+    book_info = BookInfo.query.filter_by(isbn=isbn).first()
+    if book_info is None:
+        return jsonify({'error': 'Book not found'}), 404
+
+    books = Book.query.filter_by(isbn=isbn).all()
+    book_data = []
+    for book in books:
+        book_data.append({
+            'id': book.id,
+            'isbn': book.isbn,
+            'book_address': book.book_address
+        })
+
+    data = {
+        'isbn': book_info.isbn,
+        'book_title': book_info.book_title,
+        'book_author': book_info.book_author,
+        'book_publisher': book_info.book_publisher,
+        'book_type': book_info.book_type,
+        'books': book_data
+    }
+
+    return jsonify(data), 200
 
 
 book_view = BookApi.as_view('book_api')
