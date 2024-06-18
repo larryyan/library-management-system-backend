@@ -6,7 +6,7 @@ from models import *
 
 borrow_api = blueprints.Blueprint('borrow', __name__)
 
-@borrow_api.route('/borrows', methods=['POST'])
+@borrow_api.route('/', methods=['POST'])
 def create_borrow():
     data = request.get_json()
     reader_id = data.get('reader_id')

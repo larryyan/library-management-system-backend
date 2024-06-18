@@ -47,3 +47,18 @@ def get_reader(reader_id):
     }
 
     return jsonify(data), 200
+
+
+@reader_api.route('/', methods=['POST'])
+def create_reader():
+    data = request.get_json()
+    reader = Reader()
+    reader.reader_name = data.get('reader_name')
+    reader.reader_password = data.get('reader_password')
+    reader.reader_department = data.get('reader_department')
+    reader.reader_phone = data.get('reader_phone')
+
+    db.session.add(reader)
+    db.session.commit()
+
+    return jsonify({'message': 'Reader created successfully'}), 201
