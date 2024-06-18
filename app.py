@@ -109,11 +109,86 @@ class BookApi(MethodView):
         }
 
 
+class BookInfoApi(MethodView):
+    def get(self, isbn):
+        if not isbn:
+            book_infos: [BookInfo] = BookInfo.query.all()
+            results = [
+                {
+                    'isbn': book_info.isbn,
+                    'book_title': book_info.book_title,
+                    'book_author': book_info.book_author,
+                    'book_publisher': book_info.book_publisher,
+                    'book_type': book_info.book_type
+                } for book_info in book_infos
+            ]
+            return {
+                'status': 'success',
+                'message': '数据查询成功',
+                'results': results
+            }
+        book_info: BookInfo = BookInfo.query.get(isbn)
+        return {
+            'status': 'success',
+            'message': '数据查询成功',
+            'result': {
+                'isbn': book_info.isbn,
+                'book_title': book_info.book_title,
+                'book_author': book_info.book_author,
+                'book_publisher': book_info.book_publisher,
+                'book_type': book_info.book_type
+            }
+        }
+
+    def post(self):
+        form = request.json
+        book_info = BookInfo()
+        book_info.isbn = form.get('isbn')
+        book_info.book_title = form.get('book_title')
+        book_info.book_author = form.get('book_author')
+        book_info.book_publisher = form.get('book_publisher')
+        book_info.book_type = form.get('book_type')
+        db.session.add(book_info)
+        db.session.commit()
+
+        return {
+            'status': 'success',
+            'message': '数据添加成功'
+        }
+
+    def delete(self, isbn):
+        book_info = BookInfo.query.get(isbn)
+        db.session.delete(book_info)
+        db.session.commit()
+
+        return {
+            'status': 'success',
+            'message': '数据删除成功'
+        }
+
+    def put(self, isbn):
+        form = request.json
+        book_info = BookInfo.query.get(isbn)
+        book_info.book_title = form.get('book_title')
+        book_info.book_author = form.get('book_author')
+        book_info.book_publisher = form.get('book_publisher')
+        book_info.book_type = form.get('book_type')
+        db.session.commit()
+
+        return {
+            'status': 'success',
+            'message': '数据更新成功'
+        }
+
 
 book_view = BookApi.as_view('book_api')
 app.add_url_rule('/book/', defaults={'book_id': None}, view_func=book_view, methods=['GET'])
 app.add_url_rule('/book/', view_func=book_view, methods=['POST'])
 app.add_url_rule('/book/<int:book_id>', view_func=book_view, methods=['GET', 'PUT', 'DELETE'])
+bookinfo_view = BookInfoApi.as_view('book_info_api')
+app.add_url_rule('/book_info/', defaults={'isbn': None}, view_func=bookinfo_view, methods=['GET'])
+app.add_url_rule('/book_info/', view_func=bookinfo_view, methods=['POST'])
+app.add_url_rule('/book_info/<int:isbn>', view_func=bookinfo_view, methods=['GET', 'PUT', 'DELETE'])
 
 if __name__ == '__main__':
     app.run('127.0.0.1', 5000)
