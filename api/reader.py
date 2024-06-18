@@ -6,6 +6,7 @@ from models import *
 reader_api = blueprints.Blueprint('reader', __name__)
 
 
+# 获取读者借阅信息
 @reader_api.route('/<int:reader_id>/borrows', methods=['GET'])
 def get_reader_borrows(reader_id):
     reader = Reader.query.get(reader_id)
@@ -33,6 +34,7 @@ def get_reader_borrows(reader_id):
     return jsonify(data), 200
 
 
+# 获取读者信息
 @reader_api.route('/<int:reader_id>', methods=['GET'])
 def get_reader(reader_id):
     reader = Reader.query.get(reader_id)
@@ -49,6 +51,7 @@ def get_reader(reader_id):
     return jsonify(data), 200
 
 
+# 创建读者
 @reader_api.route('/', methods=['POST'])
 def create_reader():
     data = request.get_json()
@@ -62,3 +65,33 @@ def create_reader():
     db.session.commit()
 
     return jsonify({'message': 'Reader created successfully'}), 201
+
+
+# 删除读者
+@reader_api.route('/<int:reader_id>', methods=['DELETE'])
+def delete_reader(reader_id):
+    reader = Reader.query.get(reader_id)
+    if reader is None:
+        return jsonify({'error': 'Reader not found'}), 404
+
+    db.session.delete(reader)
+    db.session.commit()
+
+    return jsonify({'message': 'Reader deleted successfully'}), 200
+
+
+# 更新读者
+@reader_api.route('/<int:reader_id>', methods=['PUT'])
+def update_reader(reader_id):
+    data = request.get_json()
+    reader = Reader.query.get(reader_id)
+    if reader is None:
+        return jsonify({'error': 'Reader not found'}), 404
+
+    reader.reader_name = data.get('reader_name')
+    reader.reader_department = data.get('reader_department')
+    reader.reader_phone = data.get('reader_phone')
+
+    db.session.commit()
+
+    return jsonify({'message': 'Reader updated successfully'}), 200

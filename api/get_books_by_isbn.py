@@ -31,3 +31,43 @@ def get_book_by_isbn(isbn):
     }
 
     return jsonify(data), 200
+
+
+# 图书的增加
+@books_api.route('/', methods=['POST'])
+def create_book():
+    data = request.get_json()
+    book = Book()
+    book.isbn = data.get('isbn')
+    book.book_address = data.get('book_address')
+    db.session.add(book)
+    db.session.commit()
+
+    return jsonify({'status': 'success', 'message': '数据添加成功'}), 200
+
+
+# 图书的删除
+@books_api.route('/<isbn>', methods=['DELETE'])
+def delete_book(isbn):
+    book = Book.query.filter_by(isbn=isbn).first()
+    if book is None:
+        return jsonify({'error': 'Book not found'}), 404
+
+    db.session.delete(book)
+    db.session.commit()
+
+    return jsonify({'status': 'success', 'message': '数据删除成功'}), 200
+
+
+# 图书的更新
+@books_api.route('/<isbn>', methods=['PUT'])
+def update_book(isbn):
+    data = request.get_json()
+    book = Book.query.filter_by(isbn=isbn).first()
+    if book is None:
+        return jsonify({'error': 'Book not found'}), 404
+
+    book.book_address = data.get('book_address')
+    db.session.commit()
+
+    return jsonify({'status': 'success', 'message': '数据更新成功'}), 200
