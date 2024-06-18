@@ -1,3 +1,5 @@
+import secrets
+
 from flask import Flask, request, jsonify
 
 from extension import *
@@ -16,8 +18,11 @@ app.register_blueprint(reader_api, url_prefix='/reader')
 app.register_blueprint(borrow_api, url_prefix='/borrow')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///books.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = "216065749160164515428165282787934462756"
 db.init_app(app)
 cors.init_app(app)
+jwt = JWTManager(app)
+
 
 
 @app.route('/')
