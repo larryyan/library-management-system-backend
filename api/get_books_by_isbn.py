@@ -38,8 +38,18 @@ def get_book_by_isbn(isbn):
 def create_book():
     data = request.get_json()
     book = Book()
+    book_info = BookInfo.query.filter_by(isbn=data.get('isbn')).first()
+    book.id = Book.query.count() + 1
     book.isbn = data.get('isbn')
     book.book_address = data.get('book_address')
+    if book_info is None:
+        book_info = BookInfo()
+        book_info.isbn = data.get('isbn')
+        book_info.book_title = data.get('book_title')
+        book_info.book_author = data.get('book_author')
+        book_info.book_publisher = data.get('book_publisher')
+        book_info.book_type = data.get('book_type')
+        db.session.add(book_info)
     db.session.add(book)
     db.session.commit()
 
@@ -57,17 +67,3 @@ def delete_book(isbn):
     db.session.commit()
 
     return jsonify({'status': 'success', 'message': '数据删除成功'}), 200
-
-
-# 图书的更新
-@books_api.route('/<isbn>', methods=['PUT'])
-def update_book(isbn):
-    data = request.get_json()
-    book = Book.query.filter_by(isbn=isbn).first()
-    if book is None:
-        return jsonify({'error': 'Book not found'}), 404
-
-    book.book_address = data.get('book_address')
-    db.session.commit()
-
-    return jsonify({'status': 'success', 'message': '数据更新成功'}), 200
