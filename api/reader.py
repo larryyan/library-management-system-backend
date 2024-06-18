@@ -3,19 +3,15 @@ from flask.views import MethodView
 from models import *
 
 
-reader_api = blueprints.Blueprint('reader', __name__)
-
-
-class Reader(MethodView):
+class ReaderApi(MethodView):
 
     # 获取读者信息
     def get(self, reader_id):
-        reader = Reader.query.get(reader_id)
+        reader: Reader = Reader.query.get(reader_id)
         if reader is None:
             return jsonify({'error': 'Reader not found'}), 404
 
         data = {
-            'id': reader.id,
             'reader_name': reader.reader_name,
             'reader_department': reader.reader_department,
             'reader_phone': reader.reader_phone
@@ -64,6 +60,7 @@ class Reader(MethodView):
         return jsonify({'message': 'Reader updated successfully'}), 200
 
 
-reader_view = Reader.as_view("reader_api", __name__)
+reader_api = blueprints.Blueprint('reader', __name__)
+reader_view = ReaderApi.as_view("reader_api")
 reader_api.add_url_rule('/', view_func=reader_view, methods=['POST'])
 reader_api.add_url_rule('/<int:reader_id>', view_func=reader_view, methods=['GET', 'PUT', 'DELETE'])
