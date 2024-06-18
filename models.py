@@ -16,7 +16,7 @@ class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     isbn = db.Column(db.ForeignKey('book_info.isbn'), nullable=False)
     book_address = db.Column(db.String(255), nullable=False)
-    info = db.relationship('BookInfo', backref='info', lazy=True)
+    info = db.relationship('BookInfo', backref='info', cascade='all, delete', uselist=False)
 
     @staticmethod
     def init_db_books():

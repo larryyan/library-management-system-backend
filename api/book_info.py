@@ -36,6 +36,11 @@ class BookInfoApi(MethodView):
 
     def post(self):
         form = request.json
+        if(BookInfo.query.get(form.get('isbn'))):
+            return {
+                'status': 'error',
+                'message': '数据添加失败'
+            }
         book_info = BookInfo()
         book_info.isbn = form.get('isbn')
         book_info.book_title = form.get('book_title')

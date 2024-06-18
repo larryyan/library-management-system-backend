@@ -6,92 +6,64 @@ from models import *
 reader_api = blueprints.Blueprint('reader', __name__)
 
 
-# 获取读者借阅信息
-@reader_api.route('/<int:reader_id>/borrows', methods=['GET'])
-def get_reader_borrows(reader_id):
-    reader = Reader.query.get(reader_id)
-    if reader is None:
-        return jsonify({'error': 'Reader not found'}), 404
+class Reader(MethodView):
 
-    borrows = Borrow.query.filter_by(reader_id=reader_id).all()
-    borrow_data = []
-    for borrow in borrows:
-        book = Book.query.get(borrow.book_id)
-        borrow_data.append({
-            'id': borrow.id,
-            'book_id': borrow.book_id,
-            'book_title': book.info.book_title,
-            'borrow_time': borrow.borrow_time,
-            'return_time': borrow.return_time
-        })
+    # 获取读者信息
+    def get(self, reader_id):
+        reader = Reader.query.get(reader_id)
+        if reader is None:
+            return jsonify({'error': 'Reader not found'}), 404
 
-    data = {
-        'reader_id': reader.id,
-        'reader_name': reader.reader_name,
-        'borrows': borrow_data
-    }
+        data = {
+            'id': reader.id,
+            'reader_name': reader.reader_name,
+            'reader_department': reader.reader_department,
+            'reader_phone': reader.reader_phone
+        }
 
-    return jsonify(data), 200
+        return jsonify(data), 200
 
+    # 创建读者
+    def post(self):
+        data = request.get_json()
+        reader = Reader()
+        reader.reader_name = data.get('reader_name')
+        reader.reader_password = data.get('reader_password')
+        reader.reader_department = data.get('reader_department')
+        reader.reader_phone = data.get('reader_phone')
 
-# 获取读者信息
-@reader_api.route('/<int:reader_id>', methods=['GET'])
-def get_reader(reader_id):
-    reader = Reader.query.get(reader_id)
-    if reader is None:
-        return jsonify({'error': 'Reader not found'}), 404
+        db.session.add(reader)
+        db.session.commit()
 
-    data = {
-        'id': reader.id,
-        'reader_name': reader.reader_name,
-        'reader_department': reader.reader_department,
-        'reader_phone': reader.reader_phone
-    }
+        return jsonify({'message': 'Reader created successfully'}), 201
 
-    return jsonify(data), 200
+    # 删除读者
+    def delete(self, reader_id):
+        reader = Reader.query.get(reader_id)
+        if reader is None:
+            return jsonify({'error': 'Reader not found'}), 404
 
+        db.session.delete(reader)
+        db.session.commit()
 
-# 创建读者
-@reader_api.route('/', methods=['POST'])
-def create_reader():
-    data = request.get_json()
-    reader = Reader()
-    reader.reader_name = data.get('reader_name')
-    reader.reader_password = data.get('reader_password')
-    reader.reader_department = data.get('reader_department')
-    reader.reader_phone = data.get('reader_phone')
+        return jsonify({'message': 'Reader deleted successfully'}), 200
 
-    db.session.add(reader)
-    db.session.commit()
+    # 更新读者
+    def put(self, reader_id):
+        data = request.get_json()
+        reader = Reader.query.get(reader_id)
+        if reader is None:
+            return jsonify({'error': 'Reader not found'}), 404
 
-    return jsonify({'message': 'Reader created successfully'}), 201
+        reader.reader_name = data.get('reader_name')
+        reader.reader_department = data.get('reader_department')
+        reader.reader_phone = data.get('reader_phone')
+
+        db.session.commit()
+
+        return jsonify({'message': 'Reader updated successfully'}), 200
 
 
-# 删除读者
-@reader_api.route('/<int:reader_id>', methods=['DELETE'])
-def delete_reader(reader_id):
-    reader = Reader.query.get(reader_id)
-    if reader is None:
-        return jsonify({'error': 'Reader not found'}), 404
-
-    db.session.delete(reader)
-    db.session.commit()
-
-    return jsonify({'message': 'Reader deleted successfully'}), 200
-
-
-# 更新读者
-@reader_api.route('/<int:reader_id>', methods=['PUT'])
-def update_reader(reader_id):
-    data = request.get_json()
-    reader = Reader.query.get(reader_id)
-    if reader is None:
-        return jsonify({'error': 'Reader not found'}), 404
-
-    reader.reader_name = data.get('reader_name')
-    reader.reader_department = data.get('reader_department')
-    reader.reader_phone = data.get('reader_phone')
-
-    db.session.commit()
-
-    return jsonify({'message': 'Reader updated successfully'}), 200
+reader_view = Reader.as_view("reader_api", __name__)
+reader_api.add_url_rule('/', view_func=reader_view, methods=['POST'])
+reader_api.add_url_rule('/<int:reader_id>', view_func=reader_view, methods=['GET', 'PUT', 'DELETE'])
