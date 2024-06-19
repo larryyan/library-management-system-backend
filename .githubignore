@@ -1,2 +1,4 @@
 settings.py
 .githubignore
+__pycache__
+.idea
