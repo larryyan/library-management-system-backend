@@ -70,8 +70,9 @@ class Book(db.Model):
 
 class Borrow(db.Model):
     __tablename__ = 'borrow'
-    reader_id = db.Column(db.ForeignKey('reader.id'), primary_key=True)
-    book_id = db.Column(db.ForeignKey('books.id'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    reader_id = db.Column(db.ForeignKey('reader.id'))
+    book_id = db.Column(db.ForeignKey('books.id'))
     borrow_time = db.Column(db.DateTime, nullable=False)
     return_time = db.Column(db.DateTime, nullable=False)
 
