@@ -1,112 +1,99 @@
-# Library Management System Backend
+# 图书馆管理系统后端
 
-This is the backend repository for the Library Management System, a web-based application for managing library resources, users, and transactions. The backend is built using Flask, a lightweight Python web framework, and provides a RESTful API for the frontend to interact with.
+本项目为图书馆管理系统的后端，基于 Flask 框架开发，提供 RESTful API 用于前端与数据库的交互。适用于图书资源、用户和借阅事务的管理。
 
-This project is an assignment for the course "Database Course Design". The front-end project address: https://github.com/larryyan/library-management-system-frontend"
+本项目为“数据库课程设计”作业。前端项目地址：[library-management-system-frontend](https://github.com/larryyan/library-management-system-frontend)
 
-## Features
+## 功能特性
 
-- User authentication and authorization
-- Book management (add, update, delete, search)
-- User management (add, update, delete, search)
-- Borrowing and returning books
-- Overdue book tracking
-- Reporting and statistics
+- 用户认证与授权（基于 JWT）
+- 图书信息管理（增删改查）
+- 用户信息管理（增删改查）
+- 图书借阅与归还
+- 逾期图书追踪
+- 数据统计与报表
 
-## Technologies Used
+## 技术栈
 
-- Python
+- Python 3.11+
 - Flask
 - Flask-SQLAlchemy
 - Flask-JWT-Extended
+- Flask-CORS
 - SQLite
 
-## Getting Started
+## 快速开始
 
-### Prerequisites
+### 环境准备
 
-- Python 3.11 or higher
-- pip (Python package installer)
+- Python 3.11 及以上
+- pip
 
-### Installation
+### 安装步骤
 
-1. Clone the repository:
+1. 克隆仓库：
 
-   ```
+   ```bash
    git clone https://github.com/larryyan/library-management-system-backend.git
-   ```
-
-2. Navigate to the project directory:
-
-   ```
    cd library-management-system-backend
    ```
 
-3. Create a virtual environment:
+2. 创建虚拟环境并激活：
 
-   ```
-   python3 -m venv venv
-   ```
-
-4. Activate the virtual environment:
-
-   ```
+   ```bash
+   python -m venv venv
+   # Windows
+   venv\Scripts\activate
+   # macOS/Linux
    source venv/bin/activate
    ```
 
-5. Install the required dependencies:
+3. 安装依赖：
 
-   ```
+   ```bash
    pip install -r requirements.txt
    ```
 
-6. Set up the database:
+4. 初始化数据库：
 
-   ```
+   ```bash
    flask create
    ```
 
-7. Start the development server:
+5. 启动开发服务器：
 
-   ```
+   ```bash
    python app.py
    ```
 
-   The backend server will be running at `http://localhost:5000`.
+   后端服务将运行在 `http://127.0.0.1:5000`。
 
-## API Endpoints
+## 主要 API 接口
 
-The following are the main API endpoints provided by the backend:
+- `POST   /api/login`         用户登录，获取 JWT Token
+- `GET    /api/protected`     受保护接口，测试 Token
+- `GET    /api/book_info`     获取所有图书详细信息
+- `GET    /api/book_info/<id>`获取指定图书详细信息
+- `GET    /api/book/<id>`     获取单本图书信息
+- `POST   /api/book`          新增图书
+- `PUT    /api/book/<id>`     更新图书
+- `DELETE /api/book/<id>`     删除图书
+- `GET    /api/reader/<id>`   获取用户信息
+- `POST   /api/reader`        新增用户
+- `PUT    /api/reader/<id>`   更新用户
+- `DELETE /api/reader/<id>`   删除用户
+- `POST   /api/borrow`        借书
+- `POST   /api/return`        还书
 
-- `POST /login`: User login
-- `POST /logout`: User logout
-- `GET /books/<id>`: Get a specific book by ID
-- `POST /books`: Add a new book
-- `PUT /books/<id>`: Update a book
-- `DELETE /books/<id>`: Delete a book
-- `GET /book_info`: Get detailed information about all books
-- `GET /book_info/<id>`: Get detailed information about a book
-- `GET /reader/<id>`: Get a specific user by ID
-- `POST /reader`: Add a new user
-- `PUT /reader/<id>`: Update a user
-- `DELETE /reader/<id>`: Delete a user
-- `POST /borrow/<book_id>/<reader_id>`: Borrow a book
-- `POST /return/<book_id>/<reader_id>`: Return a book
+详细请求与响应格式请参考前端或源码。
 
-For detailed information about request and response formats, please refer to the API documentation.
+## 数据库结构
 
-## Database Schema
+- `reader`    用户信息表
+- `books`     图书实例表
+- `book_info` 图书详细信息表
+- `borrow`    借阅记录表
 
-The backend uses SQLite as the database. The main tables in the database schema are:
+## 许可证
 
-- `reader`: Stores user information
-- `book`: Stores book information
-- `borrow`: Stores borrowing transactions
-- `book_info`: Stores detailed information about books
-
-For more details about the database schema, please refer to the database migration files in the `migrations` directory.
-
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for more information.
+本项目采用 MIT License，详见 LICENSE 文件。
