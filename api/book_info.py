@@ -81,7 +81,7 @@ class BookInfoApi(MethodView):
 
 
 book_info_api = blueprints.Blueprint('book_info', __name__)
-bookinfo_view = BookInfoApi.as_view('book_info_api')
-book_info_api.add_url_rule('/', defaults={'isbn': None}, view_func=bookinfo_view, methods=['GET'])
-book_info_api.add_url_rule('/', view_func=bookinfo_view, methods=['POST'])
-book_info_api.add_url_rule('/<int:isbn>', view_func=bookinfo_view, methods=['GET', 'PUT', 'DELETE'])
+bookInfo_view = BookInfoApi.as_view('book_info_api')
+book_info_api.add_url_rule('/', defaults={'isbn': None}, view_func=bookInfo_view, methods=['GET'])
+book_info_api.add_url_rule('/', view_func=bookInfo_view, methods=['POST'])
+book_info_api.add_url_rule('/<int:isbn>', view_func=bookInfo_view, methods=['GET', 'PUT', 'DELETE'])

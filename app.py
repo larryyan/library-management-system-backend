@@ -13,10 +13,10 @@ from flask_jwt_extended import *
 
 
 app = Flask(__name__)
-app.register_blueprint(book_info_api, url_prefix='/book_info')
-app.register_blueprint(books_api, url_prefix='/book')
-app.register_blueprint(reader_api, url_prefix='/reader')
-app.register_blueprint(borrow_api, url_prefix='/borrow')
+app.register_blueprint(book_info_api, url_prefix='/api/book_info')
+app.register_blueprint(books_api, url_prefix='/api/book')
+app.register_blueprint(reader_api, url_prefix='/api/reader')
+app.register_blueprint(borrow_api, url_prefix='/api/borrow')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///books.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = "216065749160164515428165282787934462756"
@@ -25,7 +25,7 @@ cors.init_app(app)
 jwt = JWTManager(app)
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
@@ -45,7 +45,7 @@ def login():
     return jsonify(access_token=access_token), 200
 
 
-@app.route('/protected', methods=['GET'])
+@app.route('/api/protected', methods=['GET'])
 @jwt_required()
 def protected():
     now_user = get_jwt_identity()

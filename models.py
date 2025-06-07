@@ -1,6 +1,4 @@
 from extension import db
-from nltk import book
-
 
 class BookInfo(db.Model):
     __tablename__ = 'book_info'
